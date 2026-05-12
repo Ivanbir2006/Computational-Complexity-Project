@@ -8,7 +8,5 @@ CompileFlags:
 EOF
 
 echo "Start building the project"
-cmake -S . -B source/build && cmake --build source/build
-
 rm main 2>/dev/null
-mv source/build/main .
+cmake -S . -B source/build && cmake --build source/build

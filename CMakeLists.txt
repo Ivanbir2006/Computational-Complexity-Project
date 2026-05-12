@@ -10,10 +10,18 @@ message(STATUS "C++ standard ${CMAKE_CXX_STANDARD}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fsanitize=address")
 
-add_executable(main 
-    main.cpp
-    source/Algo.cpp
+enable_testing()
+
+add_subdirectory(source)
+add_subdirectory(tests)
+
+
+add_executable(main main.cpp)
+target_link_libraries(main Algo headers)
+
+set_target_properties(main PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
-target_include_directories(main PRIVATE source)
 message(STATUS "Build completed!")
+
