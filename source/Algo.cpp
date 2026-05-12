@@ -21,101 +21,6 @@ std::pair<Vertex, Vertex> GetSourceAndSink(const std::set<Vertex>& terminals) {
   return {source, sink};
 }
 
-Graph ReverseEdges(const Graph& graph, Vertex source, Vertex sink) {
-  size_t n = graph.GetVertexSize();
-
-  std::vector<int> level(n, -1);
-  std::queue<Vertex> q;
-
-  level[source] = 0;
-  q.push(source);
-
-  while (!q.empty()) {
-    Vertex v = q.front();
-    q.pop();
-
-    for (const Edge& e : graph.edges_) {
-      if (e.v1_ == v && level[e.v2_] == -1) {
-        level[e.v2_] = level[v] + 1;
-        q.push(e.v2_);
-      } 
-      else if (e.v2_ == v && level[e.v1_] == -1) {
-        level[e.v1_] = level[v] + 1;
-        q.push(e.v1_);
-      }
-    }
-  }
-
-  std::vector<Edge> new_edges;
-  new_edges.reserve(graph.edges_.size());
-
-  for (const Edge& e : graph.edges_) {
-    Vertex u = e.v1_;
-    Vertex v = e.v2_;
-
-    if (level[u] == -1 || level[v] == -1) continue;
-
-    if (level[u] < level[v]) {
-      new_edges.push_back({u, v, e.w_});
-    } else if (level[v] < level[u]) {
-      new_edges.push_back({v, u, e.w_});
-    }
-  }
-
-  std::set<Vertex> new_terminals = {source, sink};
-
-  return {
-    std::move(new_edges),
-    std::move(new_terminals),
-    n
-  };
-}
-
-Graph SqueezeCords(const Graph& graph) {
-  std::unordered_map<Vertex, Vertex> to_new_cords;
-
-  Vertex next_id = 0;
-
-  for (const Edge& edge : graph.edges_) {
-    if (!to_new_cords.contains(edge.v1_)) {
-      to_new_cords[edge.v1_] = next_id++;
-    }
-
-    if (!to_new_cords.contains(edge.v2_)) {
-      to_new_cords[edge.v2_] = next_id++;
-    }
-  }
-
-  for (Vertex terminal : graph.terminals_) {
-    if (!to_new_cords.contains(terminal)) {
-      to_new_cords[terminal] = next_id++;
-    }
-  }
-
-  std::vector<Edge> new_edges;
-  new_edges.reserve(graph.edges_.size());
-
-  for (const Edge& edge : graph.edges_) {
-    new_edges.push_back({
-      to_new_cords[edge.v1_],
-      to_new_cords[edge.v2_],
-      edge.w_
-    });
-  }
-
-  std::set<Vertex> new_terminals;
-
-  for (Vertex terminal : graph.terminals_) {
-    new_terminals.insert(to_new_cords[terminal]);
-  }
-
-  return {
-    std::move(new_edges),
-    std::move(new_terminals),
-    static_cast<size_t>(next_id)
-  };
-}
-
 Graph GetMergedTerminals(const Graph& in_graph, Vertex excluded, const std::set<Vertex>& terminals) {
   std::vector<Edge> out_graph;
   const Vertex new_terminal = in_graph.GetVertexSize();
@@ -126,6 +31,7 @@ Graph GetMergedTerminals(const Graph& in_graph, Vertex excluded, const std::set<
 
     if (v_1 != v_2) {
       out_graph.push_back({v_1, v_2, edge.w_});
+      out_graph.push_back({v_2, v_1, edge.w_});
     }
   }
 
@@ -135,10 +41,7 @@ Graph GetMergedTerminals(const Graph& in_graph, Vertex excluded, const std::set<
     in_graph.GetVertexSize() + 1
   );
 
-  Graph squeezed_graph = SqueezeCords(merged_graph);
-  auto [source, sink] = GetSourceAndSink(squeezed_graph.terminals_);
-
-  return ReverseEdges(squeezed_graph, source, sink);
+  return std::move(merged_graph);
 }
 
 int Graph::GetMinimumMultiCut() const {

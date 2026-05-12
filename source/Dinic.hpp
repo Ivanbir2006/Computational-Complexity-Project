@@ -127,21 +127,3 @@ class Dinic {
 };
 
 } // namespace Dinic
-
-// int main() {
-//   long long n;
-//   long long m;
-//   std::cin >> n >> m;
-//   Dinic::Dinic graph(n, 0, n - 1, m);
-
-//   for (long long i = 0; i < m; ++i) {
-//     long long v1;
-//     long long v2;
-//     long long c;
-//     std::cin >> v1 >> v2 >> c;
-//     graph.Dinic::AddEdge(v1 - 1, v2 - 1, c, i);
-//   }
-
-//   std::cout << graph.Dinic::MaxFlow() << '\n';
-//   graph.Dinic::PrintFlows();
-// }
