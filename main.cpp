@@ -13,4 +13,7 @@ int main() {
 
   Graph g({{0, 3, 1}, {1, 3, 2}, {2, 3, 3}, {0, 3, 1}}, {0, 1, 2}, 4);
   std::cout << "Minimum multicut ->" << " " << g.GetMinimumMultiCut() << "\n";
+
+  Graph g2({{0,1,1},{1,2,1},{2,0,1}}, {0, 1, 2}, 3);
+  std::cout << "Minimum multicut ->" << " " << g2.GetMinimumMultiCut() << "\n";
 }
