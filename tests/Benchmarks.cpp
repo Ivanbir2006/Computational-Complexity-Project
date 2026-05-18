@@ -15,28 +15,20 @@ void BenchmarkGraphFamily(
 
   double avgRatio = 0.0;
   double maxRatio = 0.0;
-
   double avgTimeMs = 0.0;
-
   int validTests = 0;
 
   for (int t = 0; t < testsCount; ++t) {
-
     Graph g = generator();
-
     auto start = high_resolution_clock::now();
-
     int approx = g.GetMinimumMultiCut();
-
     auto finish = high_resolution_clock::now();
 
     double elapsed =
       duration_cast<microseconds>(finish - start).count() / 1000.0;
 
     avgTimeMs += elapsed;
-
     auto [partition, exactDouble] = FindBestPartition(g);
-
     int exact = static_cast<int>(exactDouble);
 
     if (exact == 0) {
@@ -45,9 +37,7 @@ void BenchmarkGraphFamily(
 
     double ratio =
       static_cast<double>(approx) / exact;
-
     avgRatio += ratio;
-
     maxRatio = std::max(maxRatio, ratio);
 
     ++validTests;
@@ -57,9 +47,7 @@ void BenchmarkGraphFamily(
     avgRatio /= validTests;
   }
   avgTimeMs /= testsCount;
-
   std::cout << "\n==== " << name << " ====\n";
-
   std::cout << "Tests: " << testsCount << "\n";
   std::cout << "Average ratio: " << avgRatio << "\n";
   std::cout << "Max ratio: " << maxRatio << "\n";

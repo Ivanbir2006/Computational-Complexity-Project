@@ -11,7 +11,6 @@ using namespace GraphItems;
 // TESTS
 TEST(MultiCutApproximation, TwoTerminalsExact) {
   for (int test = 0; test < 100; ++test) {
-
     size_t n = 8;
 
     std::vector<Edge> edges;
@@ -24,14 +23,11 @@ TEST(MultiCutApproximation, TwoTerminalsExact) {
     }
 
     std::set<Vertex> terminals = {0, 1};
-
     Graph g(std::move(edges), std::move(terminals), n);
-
     int approx = g.GetMinimumMultiCut();
 
     auto [partition, exactDouble] = FindBestPartition(g);
     int exact = static_cast<int>(exactDouble);
-
     EXPECT_EQ(approx, exact);
   }
 
@@ -40,11 +36,8 @@ TEST(MultiCutApproximation, TwoTerminalsExact) {
 
 TEST(MultiCutApproximation, AllVerticesAreTerminals) {
   for (int test = 0; test < 50; ++test) {
-
     size_t n = 8;
-
     std::vector<Edge> edges;
-
     std::uniform_int_distribution<> weight(1, 10);
 
     for (size_t i = 0; i < n; ++i) {
